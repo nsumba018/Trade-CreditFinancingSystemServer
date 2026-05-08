@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class User implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int UserId;
+    private int userId;
     private String username;
     private String password;
     private String email;
@@ -30,7 +30,7 @@ public class User implements Serializable{
     }
 
     public User(int UserId, String username, String password, String email, String role, String otpCode, Date otpExpiry, Sme sme, Investor investor) {
-        this.UserId = UserId;
+        this.userId = UserId;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -59,11 +59,11 @@ public class User implements Serializable{
     
 
     public int getUserId() {
-        return UserId;
+        return userId;
     }
 
     public void setUserId(int UserId) {
-        this.UserId = UserId;
+        this.userId = UserId;
     }
 
     public String getUsername() {
