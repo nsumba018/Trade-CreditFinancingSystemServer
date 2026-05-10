@@ -52,5 +52,15 @@ public class UserDao {
          return usr;
     }
     
+    public User login(User user){
+        Session ss = HibernateUtil.getSessionFactory().openSession();
+        User result = (User)ss.createQuery("select u from User u where u.username= :uname and u.password = :pwd")
+        .setParameter("unmae", user.getUsername())
+        .setParameter("pwd", user.getPassword())
+        .uniqueResult();
+        ss.close();
+        return result;
+    }
+    
     
 }

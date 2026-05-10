@@ -49,5 +49,10 @@ public class UserServiceImpl extends UnicastRemoteObject implements UserService{
     public User getUserById(User user) throws RemoteException {
         return dao.getUserById(user); 
     }
+
+    @Override
+    public User login(User user) throws RemoteException {
+        return dao.login(user); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
