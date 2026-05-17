@@ -9,6 +9,7 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import rw.rab.model.Sme;
+import rw.rab.model.User;
 
 /**
  *
@@ -56,6 +57,16 @@ public class SmeDao {
          return sm;
         
     }
+    
+    public Sme getSmeByUserId(User user) {
+    Session ss = HibernateUtil.getSessionFactory().openSession();
+    Sme sme = (Sme) ss.createQuery(
+        "select s from Sme s where s.user.userId = :uid")
+        .setParameter("uid", user.getUserId())
+        .uniqueResult();
+    ss.close();
+    return sme;
+}
     
     
     

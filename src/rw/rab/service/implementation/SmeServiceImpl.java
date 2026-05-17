@@ -10,6 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import rw.rab.dao.SmeDao;
 import rw.rab.model.Sme;
+import rw.rab.model.User;
 import rw.rab.service.SmeService;
 
 /**
@@ -46,6 +47,11 @@ public class SmeServiceImpl extends UnicastRemoteObject implements SmeService{
     @Override
     public Sme getSmeById(Sme sme) throws RemoteException {
         return dao.getSmeById(sme); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Sme getSmeByUserId(User user) throws RemoteException {
+        return dao.getSmeByUserId(user);
     }
     
 }

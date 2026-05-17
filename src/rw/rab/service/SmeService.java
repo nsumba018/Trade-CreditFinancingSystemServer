@@ -9,6 +9,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import rw.rab.model.Sme;
+import rw.rab.model.User;
 
 /**
  *
@@ -20,4 +21,5 @@ public interface SmeService extends Remote{
     public String deleteSme(Sme sme) throws RemoteException;
     public List<Sme> getAllSmes() throws RemoteException;
     public Sme getSmeById(Sme sme) throws RemoteException;
+    public Sme getSmeByUserId(User user) throws RemoteException;
 }
