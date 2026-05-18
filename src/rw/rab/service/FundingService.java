@@ -9,6 +9,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import rw.rab.model.Funding;
+import rw.rab.model.Investor;
 
 /**
  *
@@ -20,4 +21,5 @@ public interface FundingService extends Remote{
     public String deleteFunding(Funding funding) throws RemoteException;
     public List<Funding> getAllFundings() throws RemoteException;
     public Funding getFundingById(Funding funding) throws RemoteException;
+    public List<Funding> getFundingsByInvestorId(Investor investor) throws RemoteException;
 }

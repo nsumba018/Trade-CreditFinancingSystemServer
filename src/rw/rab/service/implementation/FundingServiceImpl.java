@@ -10,6 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import rw.rab.dao.FundingDao;
 import rw.rab.model.Funding;
+import rw.rab.model.Investor;
 import rw.rab.service.FundingService;
 
 /**
@@ -46,7 +47,12 @@ public class FundingServiceImpl extends UnicastRemoteObject implements FundingSe
 
     @Override
     public Funding getFundingById(Funding funding) throws RemoteException {
-        return dao.getFundingById(funding); 
+        return dao.getFundingById(funding);
     }
-    
+
+    @Override
+    public List<Funding> getFundingsByInvestorId(Investor investor) throws RemoteException {
+        return dao.getFundingsByInvestorId(investor);
+    }
+
 }

@@ -10,6 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import rw.rab.dao.InvestorDao;
 import rw.rab.model.Investor;
+import rw.rab.model.User;
 import rw.rab.service.InvestorService;
 
 /**
@@ -47,7 +48,12 @@ public class InvestorServiceImpl extends UnicastRemoteObject implements Investor
 
     @Override
     public Investor getInvestorById(Investor investor) throws RemoteException {
-        return dao.getInvestorById(investor); 
+        return dao.getInvestorById(investor);
     }
-    
+
+    @Override
+    public Investor getInvestorByUserId(User user) throws RemoteException {
+        return dao.getInvestorByUserId(user);
+    }
+
 }

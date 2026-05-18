@@ -21,35 +21,29 @@ public class InvoiceDao {
     }
     
     public String updateInvoice(Invoice invoice) {
-    Session ss = HibernateUtil.getSessionFactory().openSession();
-    Transaction tr = ss.beginTransaction();
-    
-    // Load existing invoice first
-    Invoice existing = (Invoice) ss.get(Invoice.class, invoice.getInvoiceId());
-    
-    // Only update status if provided
-    if (invoice.getStatus() != null) {
-        existing.setStatus(invoice.getStatus());
+        Session ss = HibernateUtil.getSessionFactory().openSession();
+        Transaction tr = ss.beginTransaction();
+        Invoice existing = (Invoice) ss.get(Invoice.class, invoice.getInvoiceId());
+        if (invoice.getStatus() != null) {
+            existing.setStatus(invoice.getStatus());
+        }
+        if (invoice.getInvoiceNumber() != null) {
+            existing.setInvoiceNumber(invoice.getInvoiceNumber());
+        }
+        if (invoice.getAmount() > 0) {
+            existing.setAmount(invoice.getAmount());
+        }
+        if (invoice.getIssueDate() != null) {
+            existing.setIssueDate(invoice.getIssueDate());
+        }
+        if (invoice.getDueDate() != null) {
+            existing.setDueDate(invoice.getDueDate());
+        }
+        ss.update(existing);
+        tr.commit();
+        ss.close();
+        return "Invoice Updated Successfully";
     }
-    // Only update other fields if provided
-    if (invoice.getInvoiceNumber() != null) {
-        existing.setInvoiceNumber(invoice.getInvoiceNumber());
-    }
-    if (invoice.getAmount() > 0) {
-        existing.setAmount(invoice.getAmount());
-    }
-    if (invoice.getIssueDate() != null) {
-        existing.setIssueDate(invoice.getIssueDate());
-    }
-    if (invoice.getDueDate() != null) {
-        existing.setDueDate(invoice.getDueDate());
-    }
-    
-    ss.update(existing);
-    tr.commit();
-    ss.close();
-    return "Invoice updated successfully";
-}
     
     public String deleteInvoice(Invoice invoice){
         Session ss = HibernateUtil.getSessionFactory().openSession();

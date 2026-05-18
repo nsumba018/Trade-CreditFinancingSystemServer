@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import rw.rab.model.Funding;
+import rw.rab.model.Investor;
 
 /**
  *
@@ -51,6 +52,16 @@ public class FundingDao {
          ss.close();
          return fund;
     }
-    
-    
+
+    public List<Funding> getFundingsByInvestorId(Investor investor) {
+        Session ss = HibernateUtil.getSessionFactory().openSession();
+        List<Funding> list = ss.createQuery(
+            "select f from Funding f where f.investor.investorId = :iid")
+            .setParameter("iid", investor.getInvestorId())
+            .list();
+        ss.close();
+        return list;
+    }
+
+
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import rw.rab.model.Investor;
+import rw.rab.model.User;
 
 /**
  *
@@ -51,6 +52,16 @@ public class InvestorDao {
          ss.close();
          return invest;
     }
-    
-    
+
+    public Investor getInvestorByUserId(User user) {
+        Session ss = HibernateUtil.getSessionFactory().openSession();
+        Investor result = (Investor) ss.createQuery(
+            "select i from Investor i where i.user.userId = :uid")
+            .setParameter("uid", user.getUserId())
+            .uniqueResult();
+        ss.close();
+        return result;
+    }
+
+
 }

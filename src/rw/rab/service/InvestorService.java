@@ -9,6 +9,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import rw.rab.model.Investor;
+import rw.rab.model.User;
 
 /**
  *
@@ -20,4 +21,5 @@ public interface InvestorService extends Remote{
     public String deleteInvestor(Investor investor) throws RemoteException;
     public List<Investor> getAllInvestors() throws RemoteException;
     public Investor getInvestorById(Investor investor) throws RemoteException;
+    public Investor getInvestorByUserId(User user) throws RemoteException;
 }
