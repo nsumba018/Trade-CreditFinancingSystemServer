@@ -12,6 +12,9 @@ import rw.rab.model.User;
  */
 public class UserDao {
     public String createUser(User user){
+        if (!isValidEmail(user.getEmail())) {
+            return "Invalid email address. Please use a real email like name@example.com";
+        }
         Session ss = HibernateUtil.getSessionFactory().openSession();
         Transaction tr = ss.beginTransaction();
         ss.save(user);
@@ -21,6 +24,9 @@ public class UserDao {
     }
     
     public String updateUser(User user){
+        if (!isValidEmail(user.getEmail())) {
+            return "Invalid email address. Please use a real email like name@example.com";
+        }
         Session ss = HibernateUtil.getSessionFactory().openSession();
         Transaction tr = ss.beginTransaction();
         ss.update(user);
@@ -55,9 +61,10 @@ public class UserDao {
     public User login(User user) {
         Session ss = HibernateUtil.getSessionFactory().openSession();
         User result = (User) ss.createQuery(
-            "select u from User u where u.username = :uname and u.password = :pwd")
+            "select u from User u where u.username = :uname and u.password = :pwd and upper(u.role) = :role")
             .setParameter("uname", user.getUsername())
             .setParameter("pwd", user.getPassword())
+            .setParameter("role", user.getRole().trim().toUpperCase())
             .uniqueResult();
         ss.close();
 
@@ -133,6 +140,21 @@ public class UserDao {
     }
 
     private void sendOtpEmail(String recipientEmail, String otp) {
+        System.out.println("========================================");
+        System.out.println("OTP EMAIL: " + recipientEmail);
+        System.out.println("OTP CODE : " + otp);
+        System.out.println("========================================");
+
+        if (!isValidEmail(recipientEmail)) {
+            System.out.println("OTP email not sent because email is invalid: " + recipientEmail);
+            return;
+        }
+
+        publishOtpToActiveMq(recipientEmail, otp);
+        sendOtpUsingJavaMail(recipientEmail, otp);
+    }
+
+    private void publishOtpToActiveMq(String recipientEmail, String otp) {
         try {
             org.apache.activemq.ActiveMQConnectionFactory factory =
                 new org.apache.activemq.ActiveMQConnectionFactory("tcp://localhost:61616");
@@ -148,19 +170,29 @@ public class UserDao {
             jmsSession.close();
             connection.close();
             System.out.println("OTP event published to ActiveMQ queue for: " + recipientEmail);
+        } catch (Exception e) {
+            System.out.println("ActiveMQ is not running, so OTP event was not queued: " + e.getMessage());
+            System.out.println("Continuing with JavaMail email sending...");
+        }
+    }
 
+    private void sendOtpUsingJavaMail(String recipientEmail, String otp) {
+        try {
             java.util.Properties props = new java.util.Properties();
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.starttls.enable", "true");
             props.put("mail.smtp.host", "smtp.gmail.com");
             props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.connectiontimeout", "10000");
+            props.put("mail.smtp.timeout", "10000");
+            props.put("mail.smtp.writetimeout", "10000");
 
             javax.mail.Session mailSession = javax.mail.Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
                         return new javax.mail.PasswordAuthentication(
                             "nsumbaherve11@gmail.com",
-                            "bqmeekohwcbtahsv"
+                            "tbrsrqxycslfiase"
                         );
                     }
                 });
@@ -171,7 +203,7 @@ public class UserDao {
                 javax.mail.Message.RecipientType.TO,
                 javax.mail.internet.InternetAddress.parse(recipientEmail)
             );
-            email.setSubject("SME Trade Credit — Your OTP Verification Code");
+            email.setSubject("SME Trade Credit - Your OTP Verification Code");
             email.setText(
                 "Dear User,\n\n" +
                 "Your OTP verification code is: " + otp + "\n\n" +
@@ -179,16 +211,23 @@ public class UserDao {
                 "If you did not request this code, please ignore this email.\n\n" +
                 "SME Trade Credit Financing System\n" +
                 "Adventist University of Central Africa\n" +
-                "INSY 7312 — Java Programming"
+                "INSY 7312 - Java Programming"
             );
 
             javax.mail.Transport.send(email);
             System.out.println("OTP email sent successfully to: " + recipientEmail);
-
         } catch (Exception e) {
-            System.out.println("Error sending OTP email: " + e.getMessage());
+            System.out.println("Error sending OTP email: " + e.getClass().getName() + ": " + e.getMessage());
             System.out.println("OTP for " + recipientEmail + ": " + otp);
+            e.printStackTrace();
         }
+    }
+
+    private boolean isValidEmail(String email) {
+        if (email == null) {
+            return false;
+        }
+        return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     }
 
 
